@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Real-Time JSON Data</title>
+  <style>
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+    th, td {
+      border: 1px solid black;
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+  </style>
+</head>
+<body>
+  <h1>JSON Data</h1>
+  <table id="json-table">
+    <thead>
+      <tr>
+        <th>SL NO</th>
+        <th>DATE</th>
+        <th>INVOICE NO</th>
+        <th>ITEM</th>
+        <th>QUANTITY</th>
+      </tr>
+    </thead>
+    <tbody id="json-data"></tbody>
+  </table>
+  <script>
+    const jsonDataElement = document.getElementById('json-data');
+    const socket = new WebSocket(`ws://${window.location.host}`);
+    
+    socket.addEventListener('message', (event) => {
+      const jsonDataArray = JSON.parse(event.data);
+      renderTable(jsonDataArray);
+    });
+
+    function renderTable(dataArray) {
+      // Clear previous table data
+      jsonDataElement.innerHTML = '';
+
+      // Loop through the array and create a table row for each object
+      dataArray.forEach((dataObj) => {
+        const row = document.createElement('tr');
+        for (const key in dataObj) {
+          const cell = document.createElement('td');
+          cell.textContent = dataObj[key];
+          row.appendChild(cell);
+        }
+        jsonDataElement.appendChild(row);
+      });
+    }
+  </script>
+</body>
+</html>
